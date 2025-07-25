@@ -14,7 +14,7 @@
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/colors": "^3.0.0",
     "@radix-ui/react-slot": "^1.2.3",
-    "archiver": "^6.0.1",
+    "archiver": "^7.0.1",
     "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
