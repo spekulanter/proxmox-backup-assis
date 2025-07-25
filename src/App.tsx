@@ -4,6 +4,7 @@ import { Dashboard } from './components/Dashboard'
 import { BackupConfigurations } from './components/BackupConfigurations'
 import { BackupHistory } from './components/BackupHistory'
 import { ServerManagement } from './components/ServerManagement'
+import { InstallationScript } from './components/InstallationScript'
 import { Navigation } from './components/Navigation'
 import { Toaster } from './components/ui/sonner'
 
@@ -51,7 +52,7 @@ export type BackupJob = {
   size?: number
 }
 
-type ActiveTab = 'dashboard' | 'configurations' | 'history' | 'servers'
+type ActiveTab = 'dashboard' | 'configurations' | 'history' | 'servers' | 'install'
 
 function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard')
@@ -211,6 +212,8 @@ function App() {
         return <BackupHistory jobs={jobs} configs={configs} servers={servers} />
       case 'servers':
         return <ServerManagement servers={servers} />
+      case 'install':
+        return <InstallationScript />
       default:
         return <Dashboard servers={servers} configs={configs} jobs={jobs} />
     }

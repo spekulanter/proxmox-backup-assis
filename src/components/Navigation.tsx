@@ -1,9 +1,9 @@
 import { Button } from './ui/button'
-import { Server, Shield, Clock, Database } from '@phosphor-icons/react'
+import { Server, Shield, Clock, Database, Terminal } from '@phosphor-icons/react'
 
 type NavigationProps = {
   activeTab: string
-  onTabChange: (tab: 'dashboard' | 'configurations' | 'history' | 'servers') => void
+  onTabChange: (tab: 'dashboard' | 'configurations' | 'history' | 'servers' | 'install') => void
 }
 
 export function Navigation({ activeTab, onTabChange }: NavigationProps) {
@@ -12,6 +12,7 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
     { id: 'configurations', label: 'Backup Configs', icon: Clock },
     { id: 'history', label: 'History', icon: Database },
     { id: 'servers', label: 'Servers', icon: Server },
+    { id: 'install', label: 'Install Script', icon: Terminal },
   ] as const
 
   return (
