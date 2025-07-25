@@ -1,4 +1,4 @@
-import { Button } from '../ui/button'
+import { Button } from './ui/button'
 import { Server, Shield, Clock, Database } from '@phosphor-icons/react'
 
 type NavigationProps = {

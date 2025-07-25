@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { Badge } from '../ui/badge'
-import { Progress } from '../ui/progress'
-import { Button } from '../ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
+import { Badge } from './ui/badge'
+import { Progress } from './ui/progress'
+import { Button } from './ui/button'
 import { Server, BackupConfig, BackupJob } from '../App'
 import { Clock, Shield, AlertTriangle, CheckCircle, XCircle, Play } from '@phosphor-icons/react'
 
