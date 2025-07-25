@@ -1,35 +1,35 @@
 # Proxmox Configuration Backup Manager - PRD
 
-## Core Purpose & Success
+**Mission Statement**: A 
 
 **Mission Statement**: A specialized web application for backing up and managing Proxmox VE system configuration files to enable quick disaster recovery and system migration.
 
 **Success Indicators**: 
 - Users can reliably backup critical Proxmox configuration files
-- Quick system restoration in case of hardware failure
+**Experience Qualities**: Reliable, Professional, Effi
 - Automated scheduling of configuration backups
 - Clear overview of backup status and history
 
 **Experience Qualities**: Reliable, Professional, Efficient
 
-## Project Classification & Approach
 
-**Complexity Level**: Light Application (multiple features with basic state management for backup configurations, schedules, and monitoring)
 
-**Primary User Activity**: Acting (configuring backups, monitoring status, managing schedules)
+- Accessing configuration files during disaster recovery
 
-## Thought Process for Feature Selection
+### Server Management
 
-**Core Problem Analysis**: When Proxmox hardware fails, administrators need to quickly restore system configuration to a new installation, including network settings, storage configuration, user permissions, and system services.
 
-**User Context**: System administrators managing Proxmox environments who need reliable configuration backup solutions for disaster recovery scenarios.
 
-**Critical Path**: 
-1. Add Proxmox servers → 2. Configure backup types → 3. Set schedules → 4. Monitor execution → 5. Access backups for recovery
+- **Success criteria**: Comprehensive coverage of critical system configuration paths
 
-**Key Moments**: 
-- Setting up automated backup schedules
-- Monitoring backup completion status
+- **Why it matters**: Ensures regular backups without manual intervention
+
+- **What it does**:
+- **Success criteria**: Clear status reporting and progress tracking
+
+- **Why it matter
+
+
 - Accessing configuration files during disaster recovery
 
 ## Essential Features
@@ -70,11 +70,11 @@
 
 **Simplicity Spectrum**: Clean interface with information density appropriate for system administrators who need comprehensive data at a glance.
 
-### Color Strategy
+
 **Color Scheme Type**: Analogous blues and grays with purposeful accent colors for status indication
 
 **Primary Color**: Deep blue (oklch(0.45 0.15 260)) - representing stability, trust, and technical professionalism
-**Secondary Colors**: Cool grays for backgrounds and supporting elements
+- Progress indicators for active backup operations
 **Accent Color**: Deep blue for primary actions and focus states
 **Color Psychology**: Blues convey reliability and technical competence; grays provide neutral backdrop for information
 **Status Colors**: Green for success, red for failures, amber for warnings, blue for running operations
@@ -82,17 +82,17 @@
 **Foreground/Background Pairings**:
 - Background (white): Foreground (dark blue-gray) - 15.2:1 contrast ratio
 - Card (white): Card-foreground (dark blue-gray) - 15.2:1 contrast ratio  
-- Primary (deep blue): Primary-foreground (white) - 10.4:1 contrast ratio
+### Accessibility & Readability
 - Secondary (light gray): Secondary-foreground (darker gray) - 12.8:1 contrast ratio
-- Muted (light gray): Muted-foreground (medium gray) - 9.1:1 contrast ratio
+## Edge Cases & Problem Scenarios
 
-### Typography System
+- Authentication fail
 **Font Pairing Strategy**: Single family approach using Inter for its excellent legibility and professional appearance
 **Typographic Hierarchy**: Clear distinction between headings, body text, and technical information with consistent sizing scale
 **Font Personality**: Clean, technical, highly legible - appropriate for data-heavy interfaces
 **Readability Focus**: Optimized for scanning configuration data and status information
 
-**Which fonts**: Inter for all text elements
+
 **Legibility Check**: Inter provides excellent legibility for both regular text and technical data
 
 ### Visual Hierarchy & Layout
@@ -102,9 +102,9 @@
 **Responsive Approach**: Progressive disclosure of details on smaller screens
 **Content Density**: Balanced for technical users who need comprehensive information
 
-### Animations
+
 **Purposeful Meaning**: Subtle animations for state changes and progress indication
-**Hierarchy of Movement**: Progress bars and status updates receive animation priority
+
 **Contextual Appropriateness**: Minimal but meaningful motion appropriate for professional tools
 
 ### UI Elements & Component Selection
@@ -112,7 +112,7 @@
 - Cards for grouping related configuration information
 - Tables/lists for backup history and server listings
 - Forms for configuration input with validation
-- Progress indicators for active backup operations
+
 - Status badges for quick state identification
 
 **Component Customization**: Minimal customization maintaining shadcn design principles
@@ -130,15 +130,15 @@
 ## Edge Cases & Problem Scenarios
 **Potential Obstacles**: 
 - Network connectivity issues during backup operations
-- Authentication failures with Proxmox servers
+
 - Storage space limitations for backup retention
 - Configuration file access permission issues
 
-**Edge Case Handling**: 
+
 - Clear error messaging with actionable recovery steps
 - Retry mechanisms for transient failures
 - Storage monitoring and retention management
-- Permission validation during server setup
+
 
 ## Implementation Considerations
 **Scalability Needs**: Support for multiple Proxmox servers and concurrent backup operations
