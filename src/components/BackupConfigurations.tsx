@@ -9,7 +9,7 @@ import { Label } from './ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { Switch } from './ui/switch'
 import { Server, BackupConfig } from '../App'
-import { Plus, Clock, Server as ServerIcon, Play, Pause, Trash, Shield } from '@phosphor-icons/react'
+import { Folder, HardDrives, Users, Certificate, Gear, FolderOpen, Plus, Clock, Server as ServerIcon, Play, Pause, Trash } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 type BackupConfigurationsProps = {
@@ -25,7 +25,8 @@ export function BackupConfigurations({ servers, configs }: BackupConfigurationsP
   const [formData, setFormData] = useState({
     name: '',
     serverId: '',
-    backupType: 'all' as BackupConfig['backupType'],
+    backupType: 'full-config' as BackupConfig['backupType'],
+    configPaths: [] as string[],
     scheduleEnabled: false,
     frequency: 'daily' as BackupConfig['schedule']['frequency'],
     time: '02:00',
@@ -39,7 +40,8 @@ export function BackupConfigurations({ servers, configs }: BackupConfigurationsP
     setFormData({
       name: '',
       serverId: '',
-      backupType: 'all',
+      backupType: 'full-config',
+      configPaths: [],
       scheduleEnabled: false,
       frequency: 'daily',
       time: '02:00',
@@ -56,6 +58,7 @@ export function BackupConfigurations({ servers, configs }: BackupConfigurationsP
       name: config.name,
       serverId: config.serverId,
       backupType: config.backupType,
+      configPaths: config.configPaths || [],
       scheduleEnabled: config.schedule.enabled,
       frequency: config.schedule.frequency,
       time: config.schedule.time,
@@ -68,17 +71,52 @@ export function BackupConfigurations({ servers, configs }: BackupConfigurationsP
     setIsDialogOpen(true)
   }
 
+  const getDefaultConfigPaths = (backupType: BackupConfig['backupType']): string[] => {
+    switch (backupType) {
+      case 'network':
+        return ['/etc/network/interfaces', '/etc/hosts', '/etc/hostname', '/etc/resolv.conf']
+      case 'storage':
+        return ['/etc/pve/storage.cfg', '/etc/pve/datacenter.cfg', '/etc/pve/corosync.conf']
+      case 'users':
+        return ['/etc/pve/user.cfg', '/etc/pve/domains.cfg', '/etc/passwd', '/etc/group']
+      case 'certs':
+        return ['/etc/ssl/certs/', '/etc/pve/pve-root-ca.pem', '/etc/pve/priv/', '/etc/ssh/']
+      case 'system':
+        return ['/etc/pve/', '/etc/postfix/', '/etc/cron.d/', '/etc/systemd/system/']
+      case 'full-config':
+        return [
+          '/etc/pve/',
+          '/etc/network/',
+          '/etc/hosts',
+          '/etc/hostname',
+          '/etc/resolv.conf',
+          '/etc/postfix/',
+          '/etc/ssh/',
+          '/etc/ssl/certs/',
+          '/etc/cron.d/',
+          '/etc/systemd/system/'
+        ]
+      default:
+        return []
+    }
+  }
+
   const handleSave = () => {
     if (!formData.name || !formData.serverId) {
       toast.error('Please fill in all required fields')
       return
     }
 
+    const configPaths = formData.configPaths.length > 0 
+      ? formData.configPaths 
+      : getDefaultConfigPaths(formData.backupType)
+
     const configData: BackupConfig = {
       id: editingConfig?.id || Date.now().toString(),
       name: formData.name,
       serverId: formData.serverId,
       backupType: formData.backupType,
+      configPaths,
       schedule: {
         enabled: formData.scheduleEnabled,
         frequency: formData.frequency,
@@ -118,12 +156,26 @@ export function BackupConfigurations({ servers, configs }: BackupConfigurationsP
     )
   }
 
+  const getBackupTypeIcon = (type: BackupConfig['backupType']) => {
+    const icons = {
+      network: <HardDrives size={16} className="text-muted-foreground" />,
+      storage: <Folder size={16} className="text-muted-foreground" />,
+      users: <Users size={16} className="text-muted-foreground" />,
+      certs: <Certificate size={16} className="text-muted-foreground" />,
+      system: <Gear size={16} className="text-muted-foreground" />,
+      'full-config': <FolderOpen size={16} className="text-muted-foreground" />
+    }
+    return icons[type]
+  }
+
   const getBackupTypeLabel = (type: BackupConfig['backupType']) => {
     const labels = {
-      vms: 'Virtual Machines',
-      containers: 'LXC Containers',
-      host: 'Host Configuration',
-      all: 'Everything'
+      network: 'Network Configuration',
+      storage: 'Storage & Cluster',
+      users: 'Users & Permissions',
+      certs: 'Certificates & SSH',
+      system: 'System Services',
+      'full-config': 'Complete Configuration'
     }
     return labels[type]
   }
@@ -208,10 +260,12 @@ export function BackupConfigurations({ servers, configs }: BackupConfigurationsP
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Everything</SelectItem>
-                    <SelectItem value="vms">Virtual Machines</SelectItem>
-                    <SelectItem value="containers">LXC Containers</SelectItem>
-                    <SelectItem value="host">Host Configuration</SelectItem>
+                    <SelectItem value="full-config">Complete Configuration</SelectItem>
+                    <SelectItem value="network">Network Configuration</SelectItem>
+                    <SelectItem value="storage">Storage & Cluster</SelectItem>
+                    <SelectItem value="users">Users & Permissions</SelectItem>
+                    <SelectItem value="certs">Certificates & SSH</SelectItem>
+                    <SelectItem value="system">System Services</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -383,7 +437,7 @@ export function BackupConfigurations({ servers, configs }: BackupConfigurationsP
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Shield size={16} className="text-muted-foreground" />
+                      {getBackupTypeIcon(config.backupType)}
                       <span className="text-sm">
                         {getBackupTypeLabel(config.backupType)}
                       </span>
@@ -397,7 +451,7 @@ export function BackupConfigurations({ servers, configs }: BackupConfigurationsP
                   </div>
                   
                   <div className="mt-4 pt-4 border-t">
-                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                    <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
                       <span>
                         Retention: {config.retention.count} {config.retention.unit}
                       </span>
@@ -407,6 +461,23 @@ export function BackupConfigurations({ servers, configs }: BackupConfigurationsP
                         </span>
                       )}
                     </div>
+                    {config.configPaths && config.configPaths.length > 0 && (
+                      <div className="text-xs text-muted-foreground">
+                        <div className="font-medium mb-1">Configuration paths:</div>
+                        <div className="flex flex-wrap gap-1">
+                          {config.configPaths.slice(0, 3).map((path, index) => (
+                            <span key={index} className="bg-muted px-2 py-1 rounded text-xs">
+                              {path}
+                            </span>
+                          ))}
+                          {config.configPaths.length > 3 && (
+                            <span className="bg-muted px-2 py-1 rounded text-xs">
+                              +{config.configPaths.length - 3} more
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

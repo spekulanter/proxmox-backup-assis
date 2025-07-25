@@ -22,7 +22,8 @@ export type BackupConfig = {
   id: string
   name: string
   serverId: string
-  backupType: 'vms' | 'containers' | 'host' | 'all'
+  backupType: 'network' | 'storage' | 'users' | 'certs' | 'system' | 'full-config'
+  configPaths: string[]
   schedule: {
     enabled: boolean
     frequency: 'daily' | 'weekly' | 'monthly'
@@ -79,16 +80,17 @@ function App() {
   const [configs] = useKV<BackupConfig[]>('backup-configs', [
     {
       id: '1',
-      name: 'Daily VM Backup',
+      name: 'Network Configuration Backup',
       serverId: '1',
-      backupType: 'vms',
+      backupType: 'network',
+      configPaths: ['/etc/network/interfaces', '/etc/hosts', '/etc/hostname'],
       schedule: {
         enabled: true,
         frequency: 'daily',
         time: '02:00'
       },
       retention: {
-        count: 7,
+        count: 30,
         unit: 'days'
       },
       enabled: true,
@@ -97,9 +99,10 @@ function App() {
     },
     {
       id: '2',
-      name: 'Weekly Full Backup',
+      name: 'Storage & Cluster Configuration',
       serverId: '1',
-      backupType: 'all',
+      backupType: 'storage',
+      configPaths: ['/etc/pve/storage.cfg', '/etc/pve/datacenter.cfg', '/etc/pve/corosync.conf'],
       schedule: {
         enabled: true,
         frequency: 'weekly',
@@ -107,12 +110,41 @@ function App() {
         day: 0
       },
       retention: {
-        count: 4,
+        count: 12,
         unit: 'weeks'
       },
       enabled: true,
       lastRun: new Date(Date.now() - 604800000).toISOString(),
       nextRun: new Date(Date.now() + 86400000).toISOString()
+    },
+    {
+      id: '3',
+      name: 'Complete System Configuration',
+      serverId: '1',
+      backupType: 'full-config',
+      configPaths: [
+        '/etc/pve/',
+        '/etc/network/',
+        '/etc/hosts',
+        '/etc/hostname',
+        '/etc/resolv.conf',
+        '/etc/postfix/',
+        '/etc/ssh/',
+        '/etc/ssl/certs/'
+      ],
+      schedule: {
+        enabled: true,
+        frequency: 'weekly',
+        time: '03:00',
+        day: 6
+      },
+      retention: {
+        count: 8,
+        unit: 'weeks'
+      },
+      enabled: true,
+      lastRun: new Date(Date.now() - 604800000).toISOString(),
+      nextRun: new Date(Date.now() + 172800000).toISOString()
     }
   ])
   const [jobs] = useKV<BackupJob[]>('backup-jobs', [
@@ -122,44 +154,49 @@ function App() {
       serverId: '1',
       status: 'completed',
       startTime: new Date(Date.now() - 86400000).toISOString(),
-      endTime: new Date(Date.now() - 86400000 + 1800000).toISOString(),
+      endTime: new Date(Date.now() - 86400000 + 180000).toISOString(),
       progress: 100,
       logs: [
-        'Starting VM backup...',
-        'Backing up VM 100 (web-server)',
-        'Backing up VM 101 (database)',
-        'Backup completed successfully',
-        'Total size: 2.3 GB'
+        'Starting network configuration backup...',
+        'Backing up /etc/network/interfaces',
+        'Backing up /etc/hosts',
+        'Backing up /etc/hostname',
+        'Network configuration backup completed successfully',
+        'Total size: 8.2 KB'
       ],
-      size: 2468013568
+      size: 8396
     },
     {
       id: '2',
       configId: '2',
       serverId: '1',
-      status: 'failed',
+      status: 'completed',
       startTime: new Date(Date.now() - 172800000).toISOString(),
-      endTime: new Date(Date.now() - 172800000 + 900000).toISOString(),
-      progress: 45,
+      endTime: new Date(Date.now() - 172800000 + 240000).toISOString(),
+      progress: 100,
       logs: [
-        'Starting full backup...',
-        'Backing up VMs...',
-        'Error: Insufficient storage space',
-        'Backup failed'
+        'Starting storage & cluster configuration backup...',
+        'Backing up /etc/pve/storage.cfg',
+        'Backing up /etc/pve/datacenter.cfg',
+        'Backing up /etc/pve/corosync.conf',
+        'Storage configuration backup completed',
+        'Total size: 12.4 KB'
       ],
-      size: 0
+      size: 12704
     },
     {
       id: '3',
-      configId: '1',
+      configId: '3',
       serverId: '1',
       status: 'running',
       startTime: new Date().toISOString(),
-      progress: 67,
+      progress: 78,
       logs: [
-        'Starting VM backup...',
-        'Backing up VM 100 (web-server)',
-        'Progress: 67%'
+        'Starting complete system configuration backup...',
+        'Backing up /etc/pve/ directory...',
+        'Backing up network configuration...',
+        'Backing up SSL certificates...',
+        'Progress: 78%'
       ]
     }
   ])
